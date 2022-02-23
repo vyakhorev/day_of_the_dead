@@ -1,5 +1,5 @@
-import {System} from '../node_modules/ecsy/build/ecsy.module.js';
-import {CmpVelocity, CmpPosition, CmpWhiskers} from "./components.js";
+import {System} from '../../../node_modules/ecsy/build/ecsy.module.js';
+import {CmpVelocity, CmpPosition, CmpWhiskers} from "../../components.js";
 
 class MoveSystem extends System {
     execute(delta, time) {

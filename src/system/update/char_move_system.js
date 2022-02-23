@@ -1,5 +1,5 @@
-import {System} from '../node_modules/ecsy/build/ecsy.module.js';
-import {CmpPlayerInput, CmpVelocity} from "./components.js";
+import {System} from '../../../node_modules/ecsy/build/ecsy.module.js';
+import {CmpPlayerInput, CmpVelocity} from "../../components.js";
 
 class CharMoveSystem extends System {
     execute(delta, time) {

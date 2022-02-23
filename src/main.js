@@ -1,19 +1,13 @@
 
-// import * as THREE from '../node_modules/three/build/three.module.js';
-// import {GLTFLoader} from "../node_modules/three/examples/jsm/loaders/GLTFLoader.js";
-// import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
-
-import "../node_modules/three/build/three.js";
-import "../node_modules/three/examples/js/controls/OrbitControls.js";
-import "../node_modules/three/examples/js/loaders/GLTFLoader.js";
+import * as THREE from "../node_modules/three/build/three.module.js"
+import { OrbitControls } from "./controls/OrbitControls.js"
 import { World } from '../node_modules/ecsy/build/ecsy.module.js';
 import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput } from "./components.js";
-import { ViewSystem } from "./view_system.js";
-import { MoveSystem } from "./move_system.js";
-import { PerceptionSystem } from "./perception_system.js";
-import { AiSystem } from "./ai_system.js";
-import { CharMoveSystem } from "./char_move_system.js";
-//import { AxesHelper, GridHelper, PerspectiveCamera, DirectionalLight, AmbientLight, Mesh} from "../node_modules/three/build/three.module.js";
+import { ViewSystem } from "./system/update/view_system.js";
+import { MoveSystem } from "./system/update/move_system.js";
+import { PerceptionSystem } from "./system/update/perception_system.js";
+import { AiSystem } from "./system/update/ai_system.js";
+import { CharMoveSystem } from "./system/update/char_move_system.js";
 
 
 export default class App {
@@ -75,7 +69,7 @@ export default class App {
         
 
         this.mouse = new THREE.Vector2();
-        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         window.addEventListener("mousemove", e => {
             
             this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -121,7 +115,7 @@ export default class App {
         entity.addComponent(CmpObject3D, {object: mesh_view})
               .addComponent(CmpPosition, {x: 0, z: 0})
               .addComponent(CmpVelocity, {x: 1.5, z: 1.5})
-              .addComponent(CmpRotation, {x: 0.2, z: 0.2})
+              .addComponent(CmpRotation, {around_y: 0})
               .addComponent(CmpWhiskers, {facing_wall: false});
 
         geometry = new THREE.BoxBufferGeometry(1, 1, 1);
@@ -133,7 +127,7 @@ export default class App {
         entity.addComponent(CmpObject3D, {object: mesh_view})
             .addComponent(CmpPosition, {x: 1, z: 1})
             .addComponent(CmpVelocity, {x: -1.5, z: -1.5})
-            .addComponent(CmpRotation, {x: 0, z: 0})
+            .addComponent(CmpRotation, {around_y: 0})
             .addComponent(CmpWhiskers, {facing_wall: false});
 
         geometry = new THREE.BoxBufferGeometry(1, 1, 1);
@@ -220,45 +214,6 @@ export default class App {
         }
     }
 
-
-    // addObject() {
-
-    //     this.loader.load("http://127.0.0.1:5500/static/01.glb", gltf => {
-    //         console.log(gltf);
-    //         gltf.scene.rotation.x = Math.PI / 2;
-    //         gltf.scene.position.y = 0.5;
-    //         this.scene.add(gltf.scene);
-    //         this.mesh = gltf.scene;
-    //     });
-
-    //     // const geometry = new THREE.BoxBufferGeometry();
-    //     // const material = new THREE.MeshStandardMaterial({color: "green"});
-    //     // this.mesh = new THREE.Mesh(geometry, material);
-    //     // this.scene.add(this.mesh);
-    // }
-
-    // click() {
-    //     this.renderer.domElement.addEventListener("click", e => {
-    //         if (this.isIntersects) {
-    //             this.mesh.position.z -= 0.2;
-    //             setTimeout(() => {
-    //                 this.mesh.position.z += 0.2;
-    //             }, 400);
-    //         }
-    //     });
-    // }
-
-    // render() {
-    //     this.time += 0.05;
-    //     // if (this.mesh) {
-    //     //     this.mesh.rotation.z = this.time * 0.4;
-    //     // }
-        
-    //     this.controls.update();
-    //     this.renderer.render(this.scene, this.camera);
-        
-    //     window.requestAnimationFrame(this.render.bind(this));
-    // }
 }
 
 var game_app = new App({

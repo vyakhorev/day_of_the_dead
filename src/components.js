@@ -1,4 +1,4 @@
-import {Component, TagComponent, Types} from '../node_modules/ecsy/build/ecsy.module.js';
+import {Component, TagComponent, Types} from './../node_modules/ecsy/build/ecsy.module.js';
 
 class CmpVelocity extends Component {}
 
@@ -39,7 +39,8 @@ CmpPlayerInput.schema = {
     z: { type: Types.Number }
 };
 
+class CmpTagStaticWall extends TagComponent {}
 
 
-export {CmpVelocity, CmpPosition, CmpObject3D, CmpWhiskers, CmpRotation, CmpPlayerInput};
+export {CmpVelocity, CmpPosition, CmpObject3D, CmpWhiskers, CmpRotation, CmpPlayerInput, CmpTagStaticWall};
 

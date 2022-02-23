@@ -1,5 +1,5 @@
-import {System} from '../node_modules/ecsy/build/ecsy.module.js';
-import {CmpWhiskers, CmpPosition, CmpRotation} from "./components.js";
+import {System} from '../../../node_modules/ecsy/build/ecsy.module.js';
+import {CmpWhiskers, CmpPosition, CmpRotation} from "../../components.js";
 
 class PerceptionSystem extends System {
     execute(delta, time) {
