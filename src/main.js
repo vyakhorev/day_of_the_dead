@@ -1,13 +1,15 @@
 
 import * as THREE from "../node_modules/three/build/three.module.js"
-import { OrbitControls } from "./controls/OrbitControls.js"
+import { OrbitControls } from "./services/controls/OrbitControls.js"
 import { World } from '../node_modules/ecsy/build/ecsy.module.js';
-import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput } from "./components.js";
+import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput, CmpTagStaticWall } from "./components.js";
 import { ViewSystem } from "./system/update/view_system.js";
 import { MoveSystem } from "./system/update/move_system.js";
 import { PerceptionSystem } from "./system/update/perception_system.js";
 import { AiSystem } from "./system/update/ai_system.js";
 import { CharMoveSystem } from "./system/update/char_move_system.js";
+import { WallInitSystem } from "./system/init/wall_init_system.js";
+import { Services } from "./services/serv.js"
 
 
 export default class App {
@@ -24,25 +26,13 @@ export default class App {
         this.renderer.setSize(this.width, this.height);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.container.appendChild(this.renderer.domElement);
-        
-        
-
-        // this.time = 0;
-        // this.loader = new THREE.GLTFLoader();
-        // // this.mouseMovement();
-        // this.resize();
-        // this.setupResize();
-        // //this.addObject();
-        // //this.click();
-        // //this.render();
-        
-        // console.log(this);
     }
 
     initWorld() {
         
         this.world = new World();
         this.world
+            .registerComponent(CmpTagStaticWall)
             .registerComponent(CmpObject3D)
             .registerComponent(CmpPosition)
             .registerComponent(CmpVelocity)
@@ -51,11 +41,13 @@ export default class App {
             .registerComponent(CmpPlayerInput);
 
         this.world
+            .registerSystem(WallInitSystem)
             .registerSystem(MoveSystem)
             .registerSystem(ViewSystem)
             .registerSystem(PerceptionSystem)
             .registerSystem(AiSystem)
             .registerSystem(CharMoveSystem);
+            
 
         this.clock = new THREE.Clock();
     }
@@ -74,21 +66,14 @@ export default class App {
             
             this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
 	        this.mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
-            // this.raycaster.setFromCamera(this.mouse, this.camera);
-	        // const intersects = this.raycaster.intersectObjects(this.mesh.children);
-            // if (intersects.length > 0) {
-            //     this.isIntersects = true;
-            //     this.mesh.children[0].material.color = new THREE.Color(1, 0.169, 0.191);
-            // } else {
-            //     this.isIntersects = false;
-            //     this.mesh.children[0].material.color = new THREE.Color(0.8, 0.0, 0.0);
-            // }
+
         });
     }
 
     setupScene() {
         
-        this.scene = new THREE.Scene();       
+        this.scene = new THREE.Scene();     
+        Services.setSceneService(this.scene);
 
         const helper = new THREE.AxesHelper(3);
         helper.position.set(-3.5, 0, -3.5);
@@ -125,10 +110,10 @@ export default class App {
 
         entity = this.world.createEntity();
         entity.addComponent(CmpObject3D, {object: mesh_view})
-            .addComponent(CmpPosition, {x: 1, z: 1})
-            .addComponent(CmpVelocity, {x: -1.5, z: -1.5})
-            .addComponent(CmpRotation, {around_y: 0})
-            .addComponent(CmpWhiskers, {facing_wall: false});
+              .addComponent(CmpPosition, {x: 1, z: 1})
+              .addComponent(CmpVelocity, {x: -1.5, z: -1.5})
+              .addComponent(CmpRotation, {around_y: 0})
+              .addComponent(CmpWhiskers, {facing_wall: false});
 
         geometry = new THREE.BoxBufferGeometry(1, 1, 1);
         material = new THREE.MeshStandardMaterial({color: "yellow", flatShading: true});       
@@ -137,9 +122,9 @@ export default class App {
 
         this.character_entity = this.world.createEntity();
         this.character_entity.addComponent(CmpObject3D, {object: mesh_view})
-                        .addComponent(CmpPosition, {x: 2, z: 2})
-                        .addComponent(CmpVelocity, {x: 0, z: 0})
-                        .addComponent(CmpPlayerInput, {x: 0, z: 0});
+                             .addComponent(CmpPosition, {x: 2, z: 2})
+                             .addComponent(CmpVelocity, {x: 0, z: 0})
+                             .addComponent(CmpPlayerInput, {x: 0, z: 0});
 
     }
 
