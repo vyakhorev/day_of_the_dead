@@ -1,10 +1,11 @@
 import * as THREE from "../node_modules/three/build/three.module.js"
-import { OrbitControls } from "./services/controls/OrbitControls.js"
 
-import { CmpPlayerInput } from "./components.js";
+
 import { PrefabService } from "./services/prefab_service/prefabs.js"
 import { SceneService } from "./services/scene_service/scene.js"
 import { WorldService } from "./services/ecs_world_service/world.js"
+import { ControlsService } from "./services/controls_service/controls.js"
+import { WindowService } from "./services/window_service/window.js"
 import { Services } from "./services/serv.js"
 
 
@@ -29,32 +30,20 @@ export default class App {
         this.clock = new THREE.Clock();
     }
 
-    initCameraControls() {
-        this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-        this.cameraDistance = 5;
-        this.camera.position.set(22.8, 16.3, 14.7);
-        this.camera.rotation.set(-0.84, 0.80, 0.68);
-        this.scene_service.getScene().add(this.camera);
-
-        this.mouse = new THREE.Vector2();
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        window.addEventListener("mousemove", e => {
-            
-            this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-	        this.mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
-
-        });
-    }
-
     setupServices() {
         // Divide code by services to simplify dependency managment
         this.world_service = new WorldService();
         this.scene_service = new SceneService(this.world_service);
         this.prefab_service = new PrefabService(this.scene_service);
+        this.window_service = new WindowService(window);
+        this.controls_service = new ControlsService(this.scene_service,
+                                                    this.window_service);
         // Register in singleton, for in system-invocation
         Services.world_service = this.world_service;
         Services.prefabs_service = this.prefab_service;
         Services.scene_service = this.scene_service;
+        Services.controls_service = this.controls_service;
+        Services.window_service = this.window_service;
     }
 
     setupScene() {
@@ -65,7 +54,6 @@ export default class App {
         this.clock.start();
         this.renderer.setAnimationLoop(this._updateLoop.bind(this));
     }
-
 
     _updateLoop() {
         const delta = this.clock.getDelta();
@@ -88,48 +76,30 @@ export default class App {
     }
 
     initCharacterControls() {
-        window.addEventListener("keydown", this._onControlsInputDown.bind(this));
-        window.addEventListener("keyup", this._onControlsInputUp.bind(this));
+        window.addEventListener("keydown", 
+          this.controls_service.onControlsInputDown
+          .bind(this.controls_service));
+        window.addEventListener("keyup", 
+          this.controls_service.onControlsInputUp
+          .bind(this.controls_service));
     }
 
-    _onControlsInputDown(event) {
-        if ([87, 83, 68, 65].includes(event.keyCode)){
-            const player_input = this.scene_service.getCharacterEntity().getMutableComponent(CmpPlayerInput);
+    initCameraControls() {
+        
+        this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+        this.cameraDistance = 5;
+        this.camera.position.set(22.8, 16.3, 14.7);
+        this.camera.rotation.set(-0.84, 0.80, 0.68);
+        this.scene_service.getScene().add(this.camera);
 
-            if (event.keyCode === 87){
-                player_input.z = -1;
-            }
-            if (event.keyCode === 83){
-                player_input.z = 1;
-            }
+        this.controls_service
+            .initOrbitControls(this.camera,
+                               this.renderer.domElement);
 
-            if (event.keyCode === 68){
-                player_input.x = -1;
-            }
-            if (event.keyCode === 65){
-                player_input.x = 1;
-            }   
-        }
-    }
+        window.addEventListener("mousemove",
+            this.controls_service.onMouseMove
+            .bind(this.controls_service));
 
-    _onControlsInputUp(event) {
-        if ([87, 83, 68, 65].includes(event.keyCode)){
-            const player_input = this.scene_service.getCharacterEntity().getMutableComponent(CmpPlayerInput);
-
-            if (event.keyCode === 87){
-                player_input.z = 0;
-            }
-            if (event.keyCode === 83){
-                player_input.z = 0;
-            }
-
-            if (event.keyCode === 68){
-                player_input.x = 0;
-            }
-            if (event.keyCode === 65){
-                player_input.x = 0;
-            }   
-        }
     }
 
 }
