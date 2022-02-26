@@ -10,6 +10,8 @@ import { AiSystem } from "./system/update/ai_system.js";
 import { CharMoveSystem } from "./system/update/char_move_system.js";
 import { WallInitSystem } from "./system/init/wall_init_system.js";
 import { Services } from "./services/serv.js"
+import { PrefabService } from "./services/prefab_service/prefabs.js"
+import { SceneService } from "./services/scene_service/scene.js"
 
 
 export default class App {
@@ -70,10 +72,18 @@ export default class App {
         });
     }
 
+    setupServices() {
+        SceneService.init();
+        Services.setSceneService(SceneService);
+        PrefabService.init(SceneService);
+        Services.setPrefabService(PrefabService);
+    }
+
     setupScene() {
         
-        this.scene = new THREE.Scene();     
-        Services.setSceneService(this.scene);
+        const scene_service = Services.getSceneService();
+
+        this.scene = scene_service.three_scene;
 
         const helper = new THREE.AxesHelper(3);
         helper.position.set(-3.5, 0, -3.5);
@@ -205,6 +215,7 @@ var game_app = new App({
     dom: document.getElementById("container"),
 });
 
+game_app.setupServices();
 game_app.initWorld();
 game_app.setupScene();
 game_app.subscribeResize();

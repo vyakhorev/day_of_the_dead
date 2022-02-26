@@ -5,7 +5,16 @@ var Services = {
 
     setSceneService: function (service) {
         this.scene_service = service;
+    },
+
+    getPrefabService: function () {
+        return this.prefab_service;
+    },
+
+    setPrefabService: function (service) {
+        this.prefab_service = service;
     }
+
 
 };
 
