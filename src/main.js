@@ -1,20 +1,15 @@
-
 import * as THREE from "../node_modules/three/build/three.module.js"
 import { OrbitControls } from "./services/controls/OrbitControls.js"
-import { World } from '../node_modules/ecsy/build/ecsy.module.js';
-import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput, CmpTagStaticWall } from "./components.js";
-import { ViewSystem } from "./system/update/view_system.js";
-import { MoveSystem } from "./system/update/move_system.js";
-import { PerceptionSystem } from "./system/update/perception_system.js";
-import { AiSystem } from "./system/update/ai_system.js";
-import { CharMoveSystem } from "./system/update/char_move_system.js";
-import { WallInitSystem } from "./system/init/wall_init_system.js";
-import { Services } from "./services/serv.js"
+
+import { CmpPlayerInput } from "./components.js";
 import { PrefabService } from "./services/prefab_service/prefabs.js"
 import { SceneService } from "./services/scene_service/scene.js"
+import { WorldService } from "./services/ecs_world_service/world.js"
+import { Services } from "./services/serv.js"
 
 
 export default class App {
+    /* Wire up events and embed app into it's container */
     constructor(options) {
         this.container = options.dom;
         this.width = this.container.offsetWidth;
@@ -31,26 +26,6 @@ export default class App {
     }
 
     initWorld() {
-        
-        this.world = new World();
-        this.world
-            .registerComponent(CmpTagStaticWall)
-            .registerComponent(CmpObject3D)
-            .registerComponent(CmpPosition)
-            .registerComponent(CmpVelocity)
-            .registerComponent(CmpRotation)
-            .registerComponent(CmpWhiskers)
-            .registerComponent(CmpPlayerInput);
-
-        this.world
-            .registerSystem(WallInitSystem)
-            .registerSystem(MoveSystem)
-            .registerSystem(ViewSystem)
-            .registerSystem(PerceptionSystem)
-            .registerSystem(AiSystem)
-            .registerSystem(CharMoveSystem);
-            
-
         this.clock = new THREE.Clock();
     }
 
@@ -59,8 +34,7 @@ export default class App {
         this.cameraDistance = 5;
         this.camera.position.set(22.8, 16.3, 14.7);
         this.camera.rotation.set(-0.84, 0.80, 0.68);
-        this.scene.add(this.camera);
-        
+        this.scene_service.getScene().add(this.camera);
 
         this.mouse = new THREE.Vector2();
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -73,69 +47,18 @@ export default class App {
     }
 
     setupServices() {
-        SceneService.init();
-        Services.setSceneService(SceneService);
-        PrefabService.init(SceneService);
-        Services.setPrefabService(PrefabService);
+        // Divide code by services to simplify dependency managment
+        this.world_service = new WorldService();
+        this.scene_service = new SceneService(this.world_service);
+        this.prefab_service = new PrefabService(this.scene_service);
+        // Register in singleton, for in system-invocation
+        Services.world_service = this.world_service;
+        Services.prefabs_service = this.prefab_service;
+        Services.scene_service = this.scene_service;
     }
 
     setupScene() {
-        
-        const scene_service = Services.getSceneService();
-
-        this.scene = scene_service.three_scene;
-
-        const helper = new THREE.AxesHelper(3);
-        helper.position.set(-3.5, 0, -3.5);
-        this.scene.add(helper);
-
-        const helperG = new THREE.GridHelper(20);
-        this.scene.add(helperG);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(10, 10, 10);
-        this.scene.add(directionalLight);
-
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        this.scene.add(ambientLight);
-
-        this.raycaster = new THREE.Raycaster();
-
-        let geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-        let material = new THREE.MeshStandardMaterial({color: "green", flatShading: true});       
-        let mesh_view = new THREE.Mesh( geometry, material );
-        this.scene.add(mesh_view);
-
-        let entity = this.world.createEntity();
-        entity.addComponent(CmpObject3D, {object: mesh_view})
-              .addComponent(CmpPosition, {x: 0, z: 0})
-              .addComponent(CmpVelocity, {x: 1.5, z: 1.5})
-              .addComponent(CmpRotation, {around_y: 0})
-              .addComponent(CmpWhiskers, {facing_wall: false});
-
-        geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-        material = new THREE.MeshStandardMaterial({color: "red", flatShading: true});       
-        mesh_view = new THREE.Mesh( geometry, material );
-        this.scene.add(mesh_view);
-
-        entity = this.world.createEntity();
-        entity.addComponent(CmpObject3D, {object: mesh_view})
-              .addComponent(CmpPosition, {x: 1, z: 1})
-              .addComponent(CmpVelocity, {x: -1.5, z: -1.5})
-              .addComponent(CmpRotation, {around_y: 0})
-              .addComponent(CmpWhiskers, {facing_wall: false});
-
-        geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-        material = new THREE.MeshStandardMaterial({color: "yellow", flatShading: true});       
-        mesh_view = new THREE.Mesh( geometry, material );
-        this.scene.add(mesh_view);
-
-        this.character_entity = this.world.createEntity();
-        this.character_entity.addComponent(CmpObject3D, {object: mesh_view})
-                             .addComponent(CmpPosition, {x: 2, z: 2})
-                             .addComponent(CmpVelocity, {x: 0, z: 0})
-                             .addComponent(CmpPlayerInput, {x: 0, z: 0});
-
+        this.scene_service.setupScene();
     }
 
     startGameLoop() {
@@ -147,8 +70,8 @@ export default class App {
     _updateLoop() {
         const delta = this.clock.getDelta();
         const elapsedTime = this.clock.elapsedTime;
-        this.world.execute(delta, elapsedTime);
-        this.renderer.render(this.scene, this.camera);
+        this.world_service.getWorld().execute(delta, elapsedTime);
+        this.renderer.render(this.scene_service.getScene(), this.camera);
     }
 
     subscribeResize() {
@@ -171,7 +94,7 @@ export default class App {
 
     _onControlsInputDown(event) {
         if ([87, 83, 68, 65].includes(event.keyCode)){
-            const player_input = this.character_entity.getMutableComponent(CmpPlayerInput);
+            const player_input = this.scene_service.getCharacterEntity().getMutableComponent(CmpPlayerInput);
 
             if (event.keyCode === 87){
                 player_input.z = -1;
@@ -191,7 +114,7 @@ export default class App {
 
     _onControlsInputUp(event) {
         if ([87, 83, 68, 65].includes(event.keyCode)){
-            const player_input = this.character_entity.getMutableComponent(CmpPlayerInput);
+            const player_input = this.scene_service.getCharacterEntity().getMutableComponent(CmpPlayerInput);
 
             if (event.keyCode === 87){
                 player_input.z = 0;

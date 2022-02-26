@@ -1,21 +1,7 @@
 var Services = {
-    getSceneService: function () {
-        return this.scene_service;
-    },
+    world_service: null,
+    prefabs_service: null,
+    scene_service: null
+}
 
-    setSceneService: function (service) {
-        this.scene_service = service;
-    },
-
-    getPrefabService: function () {
-        return this.prefab_service;
-    },
-
-    setPrefabService: function (service) {
-        this.prefab_service = service;
-    }
-
-
-};
-
-export {Services}
+export { Services };
