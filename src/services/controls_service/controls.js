@@ -13,13 +13,16 @@ class ControlsService {
         this.window_service = window_service
     }
 
-    initOrbitControls(camera, dom_element) {
+    initOrbitControls() {
+        const camera = this.scene_service.getCamera();
+        const dom_element = this.window_service.getRendererContainer();
         this.orbit_controls = new OrbitControls(camera, dom_element);
     }
 
-    onMouseMove(event) {           
-        this.mouse.x = (event.clientX / this.window_service.window.innerWidth) * 2 - 1;
-        this.mouse.y = - (event.clientY / this.window_service.window.innerHeight) * 2 + 1;
+    onMouseMove(event) {         
+        const window_params = this.window_service.getWindowParams();
+        this.mouse.x = (event.clientX / window_params.innerWidth) * 2 - 1;
+        this.mouse.y = - (event.clientY / window_params.innerHeight) * 2 + 1;
     }
 
     onControlsInputDown(event) {

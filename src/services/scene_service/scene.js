@@ -14,13 +14,27 @@ class SceneService {
         return this.three_scene;
     }
 
+    getCamera() {
+        return this.camera;
+    }
+
     getCharacterEntity() {
         return this.character_entity;
     }
 
-    setupScene() {
+    _initCamera() {
+        this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+        this.cameraDistance = 5;
+        this.camera.position.set(22.8, 16.3, 14.7);
+        this.camera.rotation.set(-0.84, 0.80, 0.68);
+        this.three_scene.add(this.camera);
+    }
 
+    setupScene() {
+        
         this.three_scene = new THREE.Scene();
+
+        this._initCamera();
 
         const helper = new THREE.AxesHelper(3);
         helper.position.set(-3.5, 0, -3.5);

@@ -34,6 +34,10 @@ class WorldService {
         return this.world;
     }
 
+    execute(delta, elapsedTime) {
+        this.world.execute(delta, elapsedTime);
+    }
+
 }
 
 export { WorldService };
