@@ -1,7 +1,8 @@
 // import * as THREE from "../../../node_modules/three/build/three.module.js"
 import * as THREE from "three";
 import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, 
-    CmpWhiskers, CmpPlayerInput, CmpTagStaticWall, CmpSingleShaderUniform } from "../../components.js";
+    CmpWhiskers, CmpPlayerInput, CmpTagStaticWall, CmpSingleShaderUniform, 
+    CmpAnimationMixer } from "../../components.js";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
@@ -179,8 +180,9 @@ class SceneService {
             instancedMesh.setMatrixAt(i, dummy.matrix);
         }
 
-        this.shader_uniform_entity = this.world_service.getWorld().createEntity();
-        this.shader_uniform_entity.addComponent(CmpSingleShaderUniform, {uniform_link: this.uniforms})
+        const shader_uniform_entity = this.world_service.getWorld().createEntity();
+        shader_uniform_entity.addComponent(CmpSingleShaderUniform, 
+                                           {uniform_link: this.uniforms})
                              
 
     }
@@ -233,6 +235,19 @@ class SceneService {
         
             this.isReady = true;
             this.camera.lookAt(this.player.object.position);
+
+            this.shader_uniform_entity = this.world_service.getWorld().createEntity();
+            this.shader_uniform_entity.addComponent(CmpSingleShaderUniform, 
+                                                    {uniform_link: this.uniforms});
+
+            this.character_entity = this.world_service.getWorld().createEntity();
+            this.character_entity.addComponent(CmpObject3D, {object: this.player.object})
+                                 .addComponent(CmpPosition, {x: 2, z: 2})
+                                 .addComponent(CmpVelocity, {x: 0, z: 0})
+                                 .addComponent(CmpPlayerInput, {x: 0, z: 0})
+                                 .addComponent(CmpAnimationMixer, {mixer_link: this.player.mixer,
+                                                                   action_id: "idle"});
+
         });
     }
 

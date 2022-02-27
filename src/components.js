@@ -48,6 +48,14 @@ CmpSingleShaderUniform.schema = {
     uniform_link: { type: Types.Ref }
 };
 
+class CmpAnimationMixer extends Component {}
+
+CmpAnimationMixer.schema = {
+    mixer_link: { type: Types.Ref },
+    action_id: {type: Types.String }
+};
+
 export {CmpVelocity, CmpPosition, CmpObject3D, CmpWhiskers, 
-    CmpRotation, CmpPlayerInput, CmpTagStaticWall, CmpSingleShaderUniform};
+    CmpRotation, CmpPlayerInput, CmpTagStaticWall, CmpSingleShaderUniform,
+    CmpAnimationMixer};
 
