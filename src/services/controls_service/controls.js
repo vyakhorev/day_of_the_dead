@@ -28,8 +28,10 @@ class ControlsService {
 
     onControlsInputDown(event) {
         if (this._WASD.includes(event.keyCode)){
-            const player_input = this.scene_service.getCharacterEntity().getMutableComponent(CmpPlayerInput);
-
+            const ent = this.scene_service.getCharacterEntity();
+            if (!ent) { return; };
+            const player_input = ent.getMutableComponent(CmpPlayerInput);
+            
             if (event.keyCode === 87){
                 player_input.z = -1;
             }
@@ -48,7 +50,9 @@ class ControlsService {
 
     onControlsInputUp(event) {
         if (this._WASD.includes(event.keyCode)){
-            const player_input = this.scene_service.getCharacterEntity().getMutableComponent(CmpPlayerInput);
+            const ent = this.scene_service.getCharacterEntity();
+            if (!ent) { return; };
+            const player_input = ent.getMutableComponent(CmpPlayerInput);
 
             if (event.keyCode === 87){
                 player_input.z = 0;

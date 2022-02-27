@@ -39,12 +39,17 @@ class SceneService {
         this.gltfLoader = new GLTFLoader();
         this.gltfLoader.setDRACOLoader(dracoLoader);
 
+        this.player = {};
+        this.animations = {};
+
         this._setupCamera();
         this._setupHelpers();
         this._setupLight();
         this._setupGround();
         this._setupCemetryObjects();
         this._setupGrass();
+        this._spawnPlayer();
+
 
         this.raycaster = new THREE.Raycaster();
      
@@ -178,6 +183,57 @@ class SceneService {
         this.shader_uniform_entity.addComponent(CmpSingleShaderUniform, {uniform_link: this.uniforms})
                              
 
+    }
+
+    _spawnPlayer() {
+        this.gltfLoader.load("idle.glb", gltf => {
+            const mixer = new THREE.AnimationMixer(gltf.scene.children[0]);
+
+            const back = new THREE.Object3D();
+            back.position.set(0, 3, -3);
+            // back.parent = player.object;
+            this.player.cameras = {back};
+            
+        
+            this.player.speed = 2;
+            this.player.mixer = mixer;
+            this.player.root = mixer.getRoot();
+            this.player.object = new THREE.Object3D();
+            // this.player.object.position.z = -5;
+            this.scene.add(this.player.object);
+            this.player.object.add(gltf.scene.children[0]);
+            
+            this.animations.idle = gltf.animations[0];
+            this.player.cameras.back.parent = this.player.object;
+        
+            this.gltfLoader.load("walking.glb", gltf => {
+                this.animations.walking = gltf.animations[0];
+            })
+            this.gltfLoader.load("walking_back.glb", gltf => {
+                this.animations.walking_back = gltf.animations[0];
+            })
+            this.gltfLoader.load("running.glb", gltf => {
+                this.animations.running = gltf.animations[0];
+            })
+            this.gltfLoader.load("turn_left.glb", gltf => {
+                this.animations.turn_left = gltf.animations[0];
+            })
+            this.gltfLoader.load("turn_right.glb", gltf => {
+                this.animations.turn_right = gltf.animations[0];
+            })
+        
+            const action = this.player.mixer.clipAction(this.animations.idle);
+            action.time = 0;
+            this.player.mixer.stopAllAction();
+            this.player.action = "idle";
+            this.player.actionTime = Date.now();
+
+            // action.fadeIn(0.5);	
+            action.play();
+        
+            this.isReady = true;
+            this.camera.lookAt(this.player.object.position);
+        });
     }
 
 
