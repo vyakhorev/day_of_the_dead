@@ -6,8 +6,11 @@ import { Services } from "../../services/serv.js"
 class WallInitSystem extends InitSystem {
     onInit() {
         let entity = this.world.createEntity();
-        entity.addComponent(CmpObject3D, {object: Services.prefabs_service.createWall()})
-              .addComponent(CmpPosition, {x: 2, z: 2})
+        // entity.addComponent(CmpObject3D, {object: Services.prefabs_service.createWall()})
+        //       .addComponent(CmpPosition, {x: 2, z: 2})
+        //       .addComponent(CmpTagStaticWall)
+        //       .addComponent(CmpRotation, {around_y: 0});
+        entity.addComponent(CmpPosition, {x: 2, z: 2})
               .addComponent(CmpTagStaticWall)
               .addComponent(CmpRotation, {around_y: 0});
 
