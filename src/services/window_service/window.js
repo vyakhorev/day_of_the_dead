@@ -45,6 +45,7 @@ class WindowService {
         this.renderer.setClearColor("#201919");
 
         const camera = new THREE.PerspectiveCamera(70, this.width / this.height, 0.1, 100);
+        this.camera = camera;
         this.scene_service.setCamera(camera);
 
     }
@@ -53,8 +54,8 @@ class WindowService {
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
         this.renderer.setSize(this.width, this.height);
-        // this.camera.aspect = this.width / this.height;
-        // this.camera.updateProjectionMatrix();
+        this.camera.aspect = this.width / this.height;
+        this.camera.updateProjectionMatrix();
     }
 
 }

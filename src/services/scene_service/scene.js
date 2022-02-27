@@ -1,6 +1,7 @@
 // import * as THREE from "../../../node_modules/three/build/three.module.js"
 import * as THREE from "three";
-import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput, CmpTagStaticWall } from "../../components.js";
+import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, 
+    CmpWhiskers, CmpPlayerInput, CmpTagStaticWall, CmpSingleShaderUniform } from "../../components.js";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
@@ -33,19 +34,19 @@ class SceneService {
         
         this.scene = new THREE.Scene();
 
-        this._setupCamera();
-        this._setupHelpers();
-        this._setupLight();
-
-        this.raycaster = new THREE.Raycaster();
-
         const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath("draco/");
-
         this.gltfLoader = new GLTFLoader();
         this.gltfLoader.setDRACOLoader(dracoLoader);
 
-        this.setEnvironment();
+        this._setupCamera();
+        this._setupHelpers();
+        this._setupLight();
+        this._setupGround();
+        this._setupCemetryObjects();
+        this._setupGrass();
+
+        this.raycaster = new THREE.Raycaster();
      
     }
 
@@ -59,7 +60,6 @@ class SceneService {
     }
 
     _setupCamera() {
-        // this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 0.1, 100);
         this.cameraDistance = 4;
         this.camera.position.set(22.8, 16.3, 14.7);
         this.camera.rotation.set(-0.84, 0.80, 0.68);
@@ -75,15 +75,16 @@ class SceneService {
 
     }
 
-    setEnvironment() {
-
+    _setupGround() {
         this.gltfLoader.load("ground.glb", gltf => {
             const ground = gltf.scenes[0].children[0];
             ground.scale.set(10, 2, 10);
             console.log(gltf.scenes[0].children[0]);
             this.scene.add(ground);
         });
+    }
 
+    _setupCemetryObjects() {
         this.gltfLoader.load("ironFenceBorder.glb", gltf => {
             const ironFence = gltf.scenes[0].children[0];
             ironFence.scale.set(2, 2, 2);
@@ -106,7 +107,10 @@ class SceneService {
             this.scene.add(ironFence2);
 
         });
+    }
 
+    _setupGrass() {
+        
         this.uniforms = {};
         this.uniforms.time = {value: this.time};
         this.uniforms.playerPos = {value: new THREE.Vector3()};
@@ -169,6 +173,10 @@ class SceneService {
             dummy.updateMatrix();
             instancedMesh.setMatrixAt(i, dummy.matrix);
         }
+
+        this.shader_uniform_entity = this.world_service.getWorld().createEntity();
+        this.shader_uniform_entity.addComponent(CmpSingleShaderUniform, {uniform_link: this.uniforms})
+                             
 
     }
 

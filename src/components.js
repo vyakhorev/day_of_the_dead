@@ -40,8 +40,14 @@ CmpPlayerInput.schema = {
     z: { type: Types.Number }
 };
 
-class CmpTagStaticWall extends TagComponent {}
+class CmpTagStaticWall extends TagComponent {};
 
+class CmpSingleShaderUniform extends Component {}
 
-export {CmpVelocity, CmpPosition, CmpObject3D, CmpWhiskers, CmpRotation, CmpPlayerInput, CmpTagStaticWall};
+CmpSingleShaderUniform.schema = {
+    uniform_link: { type: Types.Ref }
+};
+
+export {CmpVelocity, CmpPosition, CmpObject3D, CmpWhiskers, 
+    CmpRotation, CmpPlayerInput, CmpTagStaticWall, CmpSingleShaderUniform};
 
