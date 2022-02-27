@@ -21,38 +21,21 @@ class SceneService {
         return this.camera;
     }
 
+    setCamera(camera) {
+        this.camera = camera;
+    }
+
     getCharacterEntity() {
         return this.character_entity;
     }
-
-    _initCamera() {
-        this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-        this.cameraDistance = 5;
-        this.camera.position.set(22.8, 16.3, 14.7);
-        this.camera.rotation.set(-0.84, 0.80, 0.68);
-        this.scene.add(this.camera);
-    }
-
 
     setupScene() {
         
         this.scene = new THREE.Scene();
 
-        this._initCamera();
-
-        const helper = new THREE.AxesHelper(3);
-        helper.position.set(-3.5, 0, -3.5);
-        this.scene.add(helper);
-
-        const helperG = new THREE.GridHelper(20);
-        this.scene.add(helperG);
-
-        // const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        // directionalLight.position.set(10, 10, 10);
-        // this.scene.add(directionalLight);
-
-        // const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        // this.scene.add(ambientLight);
+        this._setupCamera();
+        this._setupHelpers();
+        this._setupLight();
 
         this.raycaster = new THREE.Raycaster();
 
@@ -66,13 +49,33 @@ class SceneService {
      
     }
 
-    setEnvironment() {
+    _setupHelpers() {
+        const helper = new THREE.AxesHelper(3);
+        helper.position.set(-3.5, 0, -3.5);
+        this.scene.add(helper);
+
+        const helperG = new THREE.GridHelper(50, 50);
+        this.scene.add(helperG);
+    }
+
+    _setupCamera() {
+        // this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 0.1, 100);
+        this.cameraDistance = 4;
+        this.camera.position.set(22.8, 16.3, 14.7);
+        this.camera.rotation.set(-0.84, 0.80, 0.68);
+        this.scene.add(this.camera);
+    }
+
+    _setupLight() {
         this.scene.fog = new THREE.Fog("#201919", 1, 80);
+
         const light = new THREE.DirectionalLight( 0xFFFFFF );
         light.position.set(10, 10, 10);
         this.scene.add(light);
-        // const gridHelper = new THREE.GridHelper(50, 50);
-        // this.scene.add( gridHelper );
+
+    }
+
+    setEnvironment() {
 
         this.gltfLoader.load("ground.glb", gltf => {
             const ground = gltf.scenes[0].children[0];
@@ -107,15 +110,9 @@ class SceneService {
         this.uniforms = {};
         this.uniforms.time = {value: this.time};
         this.uniforms.playerPos = {value: new THREE.Vector3()};
-        // const leavesMaterial = new THREE.ShaderMaterial({
-        //     vertexShader: vertex,
-        //     fragmentShader: fragment,
-        //     uniforms: this.uniforms,
-        //     side: THREE.DoubleSide,
-        // });
+
         const leavesMaterialStandart = new THREE.MeshStandardMaterial({color: 0x52FFA1, side: THREE.DoubleSide});
         leavesMaterialStandart.onBeforeCompile = (shader) => {
-            // console.log(shader);
             shader.uniforms.time = this.uniforms.time;
             shader.uniforms.playerPos = this.uniforms.playerPos;
             shader.vertexShader = shader.vertexShader.replace(
@@ -153,8 +150,7 @@ class SceneService {
                 
                 `);
         }
-        // this.materials = [];
-        // this.materials.push(leavesMaterial);
+
         const dummy = new THREE.Object3D();
         const instanceNumber = 9000;
         const geometry = new THREE.PlaneGeometry(0.06, 0.7, 1, 4);
@@ -174,7 +170,6 @@ class SceneService {
             instancedMesh.setMatrixAt(i, dummy.matrix);
         }
 
-        // this.scene.add(new THREE.Mesh(geometry, leavesMaterial));
     }
 
 

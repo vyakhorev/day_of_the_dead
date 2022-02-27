@@ -41,6 +41,12 @@ class WindowService {
         this.renderer.outputEncoding = THREE.sRGBEncoding;
 
         this.container.appendChild(this.renderer.domElement);
+
+        this.renderer.setClearColor("#201919");
+
+        const camera = new THREE.PerspectiveCamera(70, this.width / this.height, 0.1, 100);
+        this.scene_service.setCamera(camera);
+
     }
 
     onResize() {

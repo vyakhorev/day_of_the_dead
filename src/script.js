@@ -18,8 +18,8 @@ export default class App {
 
     runStartupSequence() {
         this.setupServices();
-        this.setupScene();
         this.setupRenderer();
+        this.setupScene();
         this.subscribeResize();
         this.initCameraControls();
         this.initCharacterControls();
