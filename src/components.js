@@ -1,4 +1,5 @@
-import {Component, TagComponent, Types} from './../node_modules/ecsy/build/ecsy.module.js';
+// import {Component, TagComponent, Types} from './../node_modules/ecsy/build/ecsy.module.js';
+import { Component, TagComponent, Types } from 'ecsy';
 
 class CmpVelocity extends Component {}
 

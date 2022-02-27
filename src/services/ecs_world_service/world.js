@@ -1,4 +1,5 @@
-import { World } from '../../../node_modules/ecsy/build/ecsy.module.js';
+// import { World } from '../../../node_modules/ecsy/build/ecsy.module.js';
+import { World } from "ecsy";
 import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput, CmpTagStaticWall } from "../../components.js";
 import { ViewSystem } from "../../system/update/view_system.js";
 import { MoveSystem } from "../../system/update/move_system.js";

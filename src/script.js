@@ -1,11 +1,12 @@
-import * as THREE from "../node_modules/three/build/three.module.js"
+import "./style.css";
 
-import { PrefabService } from "./services/prefab_service/prefabs.js"
-import { SceneService } from "./services/scene_service/scene.js"
-import { WorldService } from "./services/ecs_world_service/world.js"
-import { ControlsService } from "./services/controls_service/controls.js"
-import { WindowService } from "./services/window_service/window.js"
-import { Services } from "./services/serv.js"
+import * as THREE from "three";
+import { PrefabService } from "./services/prefab_service/prefabs.js";
+import { SceneService } from "./services/scene_service/scene.js";
+import { WorldService } from "./services/ecs_world_service/world.js";
+import { ControlsService } from "./services/controls_service/controls.js";
+import { WindowService } from "./services/window_service/window.js";
+import { Services } from "./services/serv.js";
 
 
 export default class App {

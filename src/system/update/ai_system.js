@@ -1,5 +1,5 @@
-import {System} from '../../../node_modules/ecsy/build/ecsy.module.js';
-import {CmpWhiskers, CmpVelocity} from "../../components.js";
+import { System } from "ecsy";
+import { CmpWhiskers, CmpVelocity } from "../../components.js";
 
 class AiSystem extends System {
     execute(delta, time) {

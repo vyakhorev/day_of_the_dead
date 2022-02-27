@@ -1,5 +1,5 @@
-import {System} from '../../../node_modules/ecsy/build/ecsy.module.js';
-import {CmpObject3D, CmpPosition} from "../../components.js";
+import { System } from "ecsy";
+import { CmpObject3D, CmpPosition } from "../../components.js";
 
 class ViewSystem extends System {
     execute(delta, time) {

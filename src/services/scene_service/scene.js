@@ -1,4 +1,5 @@
-import * as THREE from "../../../node_modules/three/build/three.module.js"
+// import * as THREE from "../../../node_modules/three/build/three.module.js"
+import * as THREE from "three";
 import { CmpObject3D, CmpPosition, CmpRotation, CmpVelocity, CmpWhiskers, CmpPlayerInput, CmpTagStaticWall } from "../../components.js";
 
 

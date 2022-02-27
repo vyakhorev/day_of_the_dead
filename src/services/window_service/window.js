@@ -1,4 +1,5 @@
-import * as THREE from "../../../node_modules/three/build/three.module.js"
+// import * as THREE from "../../../node_modules/three/build/three.module.js"
+import * as THREE from "three";
 
 class WindowService {
     constructor(scene_service) {
@@ -46,8 +47,8 @@ class WindowService {
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
         this.renderer.setSize(this.width, this.height);
-        this.camera.aspect = this.width / this.height;
-        this.camera.updateProjectionMatrix();
+        // this.camera.aspect = this.width / this.height;
+        // this.camera.updateProjectionMatrix();
     }
 
 }

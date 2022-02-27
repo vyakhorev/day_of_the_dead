@@ -1,4 +1,5 @@
-import * as THREE from "../../../node_modules/three/build/three.module.js"
+// import * as THREE from "../../../node_modules/three/build/three.module.js"
+import * as THREE from "three";
 
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
 //
